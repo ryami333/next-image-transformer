@@ -2,10 +2,15 @@
   "name": "next-image-transformer",
   "packageManager": "yarn@4.9.2",
   "devDependencies": {
-    "prettier": "^3.7.4"
+    "next": "^16.1.1",
+    "prettier": "^3.7.4",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "sharp": "^0.34.5",
     "zod": "^4.3.5"
+  },
+  "peerDependencies": {
+    "next": ">=13.4 <17"
   }
 }
