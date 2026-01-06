@@ -38,7 +38,6 @@
   },
   "scripts": {
     "build": "vite build && tsc",
-    "release": "np --no-tests --no-publish && yarn npm publish",
-    "prepublishOnly": "yarn build"
+    "release": "yarn build && np --no-tests --no-publish && yarn npm publish"
   }
 }
