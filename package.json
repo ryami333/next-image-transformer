@@ -2,11 +2,13 @@
   "name": "next-image-transformer",
   "packageManager": "yarn@4.9.2",
   "devDependencies": {
+    "@types/node": "24",
     "next": "^16.1.1",
     "prettier": "^3.7.4",
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "fp-ts": "^2.16.11",
     "sharp": "^0.34.5",
     "zod": "^4.3.5"
   },
