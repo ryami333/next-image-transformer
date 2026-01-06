@@ -12,6 +12,9 @@ export default defineConfig({
       fileName: "index",
     },
     rollupOptions: {
+      output: {
+        format: "es",
+      },
       // Node/Next server-side library: keep Node built-ins external.
       external: (id) => id === "next" || id.startsWith("node:"),
     },
