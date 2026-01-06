@@ -32,7 +32,7 @@
     "next": ">=13.4 <17"
   },
   "scripts": {
-    "build": "vite build && tsc -p tsconfig.json",
+    "build": "vite build && tsc",
     "prepack": "yarn build"
   }
 }
