@@ -34,7 +34,6 @@
   },
   "scripts": {
     "build": "vite build && tsc",
-    "prepack": "yarn build",
     "release": "np --no-tests"
   }
 }
