@@ -19,6 +19,7 @@
   "packageManager": "yarn@4.9.2",
   "devDependencies": {
     "@types/node": "24",
+    "np": "^10.2.0",
     "prettier": "^3.7.4",
     "typescript": "^5.9.3",
     "vite": "^7.3.0"
@@ -33,6 +34,7 @@
   },
   "scripts": {
     "build": "vite build && tsc",
-    "prepack": "yarn build"
+    "prepack": "yarn build",
+    "release": "np --no-tests"
   }
 }
