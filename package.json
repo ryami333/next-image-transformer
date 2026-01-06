@@ -37,6 +37,7 @@
     "next": ">=13.4 <17"
   },
   "scripts": {
-    "build": "vite build && tsc"
+    "build": "vite build && tsc",
+    "release": "np --no-tests --no-publish && yarn npm publish"
   }
 }
