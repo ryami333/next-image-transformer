@@ -8,10 +8,12 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   build: {
     lib: {
-      entry: resolve(__dirname, "src/index.ts"),
-      name: "next-image-transformer",
-      fileName: "index",
+      entry: {
+        server: resolve(__dirname, "src/server.ts"),
+        index: resolve(__dirname, "src/index.ts"),
+      },
       formats: ["es"],
+      fileName: (_format, entryName) => `${entryName}.js`,
     },
     rollupOptions: {
       external: [
