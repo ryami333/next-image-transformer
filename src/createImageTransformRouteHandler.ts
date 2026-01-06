@@ -10,12 +10,41 @@ export const createImageTransformRouteHandler = ({
   apiRouteUrl,
   cacheDir = path.join(process.cwd(), ".transform-cache"),
   cacheControl = "public, max-age=31536000, immutable",
+  allowedHosts,
 }: {
   apiRouteUrl: string;
-  cacheDir: string;
-  cacheControl: string;
+  cacheDir?: string;
+  cacheControl?: string;
+  /**
+   * Optional allowlist for the `source` URL's host.
+   *
+   * - Exact matches: `"images.example.com"`
+   * - Host + port: `"localhost:3000"`
+   * - RegExp: `/^(?:.+\\.)?example\\.com$/` (tested against hostname and host)
+   *
+   * If omitted, all hosts are allowed (current behavior).
+   */
+  allowedHosts?: Array<string | RegExp>;
 }) => {
   const urlStringToTransformConfig = createImageUrlBuilder({ apiRouteUrl });
+
+  const isAllowedSourceUrl = (sourceUrl: URL) => {
+    if (!allowedHosts) return true;
+
+    const hostname = sourceUrl.hostname.toLowerCase();
+    const host = sourceUrl.host.toLowerCase(); // includes port if present
+
+    return allowedHosts.some((pattern) => {
+      if (pattern instanceof RegExp) {
+        return pattern.test(hostname) || pattern.test(host);
+      }
+
+      const normalized = pattern.toLowerCase();
+      return normalized.includes(":")
+        ? host === normalized
+        : hostname === normalized;
+    });
+  };
 
   return async function handler(req: Request): Promise<Response> {
     const { data: transformConfig, error } =
@@ -46,7 +75,26 @@ export const createImageTransformRouteHandler = ({
       });
     }
 
-    const upstream = await fetch(transformConfig.source);
+    let sourceUrl: URL;
+    try {
+      sourceUrl = new URL(transformConfig.source);
+    } catch {
+      return new Response("Bad Request", { status: 400 });
+    }
+
+    if (sourceUrl.protocol !== "http:" && sourceUrl.protocol !== "https:") {
+      return new Response("Bad Request", { status: 400 });
+    }
+
+    if (sourceUrl.username || sourceUrl.password) {
+      return new Response("Bad Request", { status: 400 });
+    }
+
+    if (!isAllowedSourceUrl(sourceUrl)) {
+      return new Response("Forbidden", { status: 403 });
+    }
+
+    const upstream = await fetch(sourceUrl);
     if (!upstream.ok)
       return new Response("Upstream fetch failed", { status: 502 });
 
