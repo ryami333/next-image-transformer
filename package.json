@@ -1,5 +1,7 @@
 {
   "name": "next-image-transformer",
+  "main": "dist/index.js",
+  "type": "module",
   "packageManager": "yarn@4.9.2",
   "devDependencies": {
     "@types/node": "24",

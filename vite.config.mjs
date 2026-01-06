@@ -11,11 +11,9 @@ export default defineConfig({
       entry: resolve(__dirname, "src/index.ts"),
       name: "next-image-transformer",
       fileName: "index",
+      formats: ["es"],
     },
     rollupOptions: {
-      output: {
-        format: "es",
-      },
       external: [
         "next",
         ...builtinModules,
