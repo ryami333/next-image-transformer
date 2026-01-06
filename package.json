@@ -29,16 +29,17 @@
     "@types/node": "24",
     "np": "^10.2.0",
     "prettier": "^3.7.4",
+    "sharp": "^0.34.5",
     "typescript": "^5.9.3",
     "vite": "^7.3.0"
   },
   "dependencies": {
     "fp-ts": "^2.16.11",
-    "sharp": "^0.34.5",
     "zod": "^4.3.5"
   },
   "peerDependencies": {
-    "next": ">=13.4 <17"
+    "next": ">=13.4 <17",
+    "sharp": "<1"
   },
   "scripts": {
     "build": "vite build && tsc",

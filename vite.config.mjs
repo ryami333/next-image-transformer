@@ -18,6 +18,7 @@ export default defineConfig({
     rollupOptions: {
       external: [
         "next",
+        "sharp",
         ...builtinModules,
         ...builtinModules.map((item) => `node:${item}`),
       ],
