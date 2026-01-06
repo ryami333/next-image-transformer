@@ -36,7 +36,7 @@ export const createImageTransformRouteHandler = ({
     const quality = transformConfig.q ?? 100;
 
     const cacheKey = getTransformCacheKey({ canonicalUrl });
-    const cached = await readTransformCache(cacheKey, cacheDir);
+    const cached = await readTransformCache({ cacheKey, cacheDir });
     if (cached) {
       return new Response(cached.body, {
         headers: {
@@ -110,7 +110,12 @@ export const createImageTransformRouteHandler = ({
       }
     })();
 
-    await writeTransformCache(cacheKey, out, { contentType }, cacheDir);
+    await writeTransformCache({
+      cacheKey,
+      body: out,
+      meta: { contentType },
+      cacheDir,
+    });
 
     return new Response(body, {
       headers: {

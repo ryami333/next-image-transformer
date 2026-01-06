@@ -2,8 +2,14 @@ import z from "zod";
 import { getTransformCachePaths } from "./getTransformCachePaths";
 import fs from "node:fs/promises";
 
-export async function readTransformCache(cacheKey: string, cacheDir: string) {
-  const { bodyPath, metaPath } = getTransformCachePaths(cacheKey, cacheDir);
+export async function readTransformCache({
+  cacheKey,
+  cacheDir,
+}: {
+  cacheKey: string;
+  cacheDir: string;
+}) {
+  const { bodyPath, metaPath } = getTransformCachePaths({ cacheKey, cacheDir });
 
   try {
     const [body, metaRaw] = await Promise.all([

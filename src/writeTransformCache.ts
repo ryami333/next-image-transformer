@@ -1,16 +1,21 @@
 import fs from "node:fs/promises";
 import { getTransformCachePaths } from "./getTransformCachePaths";
 
-export async function writeTransformCache(
-  cacheKey: string,
-  body: Buffer,
-  meta: { contentType: string },
-  cacheDir: string,
-) {
-  const { dir, bodyPath, metaPath } = getTransformCachePaths(
+export async function writeTransformCache({
+  cacheKey,
+  body,
+  meta,
+  cacheDir,
+}: {
+  cacheKey: string;
+  body: Buffer;
+  meta: { contentType: string };
+  cacheDir: string;
+}) {
+  const { dir, bodyPath, metaPath } = getTransformCachePaths({
     cacheKey,
     cacheDir,
-  );
+  });
   await fs.mkdir(dir, { recursive: true });
 
   const tmpSuffix = `${process.pid}-${Date.now()}-${Math.random()
