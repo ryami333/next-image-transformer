@@ -2818,6 +2818,7 @@ __metadata:
     zod: "npm:^4.3.5"
   peerDependencies:
     next: ">=13.4 <17"
+    sharp: <1
   languageName: unknown
   linkType: soft
 
