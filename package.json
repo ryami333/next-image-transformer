@@ -3,5 +3,8 @@
   "packageManager": "yarn@4.9.2",
   "devDependencies": {
     "prettier": "^3.7.4"
+  },
+  "dependencies": {
+    "zod": "^4.3.5"
   }
 }
