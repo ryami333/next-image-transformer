@@ -1,6 +1,7 @@
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
+import { builtinModules } from "node:module";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -15,8 +16,11 @@ export default defineConfig({
       output: {
         format: "es",
       },
-      // Node/Next server-side library: keep Node built-ins external.
-      external: (id) => id === "next" || id.startsWith("node:"),
+      external: [
+        "next",
+        ...builtinModules,
+        ...builtinModules.map((item) => `node:${item}`),
+      ],
     },
   },
 });
