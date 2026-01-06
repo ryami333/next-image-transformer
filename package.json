@@ -5,6 +5,7 @@
     "prettier": "^3.7.4"
   },
   "dependencies": {
+    "sharp": "^0.34.5",
     "zod": "^4.3.5"
   }
 }
