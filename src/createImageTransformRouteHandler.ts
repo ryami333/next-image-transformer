@@ -2,8 +2,8 @@ import path from "node:path";
 import { createImageUrlBuilder } from "./createImageUrlBuilder";
 import { getTransformCacheKey } from "./getTransformCacheKey";
 import { readTransformCache } from "./readTransformCache";
-import sharp from "sharp";
-import { pipe } from "fp-ts/lib/function";
+import sharp, { type Sharp } from "sharp";
+import { pipe } from "fp-ts/function";
 import { writeTransformCache } from "./writeTransformCache";
 
 export const createImageTransformRouteHandler = ({
@@ -58,12 +58,12 @@ export const createImageTransformRouteHandler = ({
        * auto-orient: read's the image's EXIF data and rotates it to the correct
        * orientation.
        */
-      (image) => image.rotate(),
+      (image: Sharp) => image.rotate(),
 
       /**
        * Resize
        */
-      (image) =>
+      (image: Sharp) =>
         transformConfig.w || transformConfig.h
           ? image.resize({
               width: transformConfig.w,
@@ -76,7 +76,7 @@ export const createImageTransformRouteHandler = ({
       /**
        * Change format
        */
-      (image) => {
+      (image: Sharp) => {
         switch (transformConfig.fmt) {
           case "preserve":
             return image;
