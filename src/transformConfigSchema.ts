@@ -9,7 +9,7 @@ export const transformConfigSchema = z.object({
    * Defaults to `"inside"` when omitted.
    */
   fit: z.enum(["cover", "contain", "fill", "inside", "outside"]).optional(),
-  fmt: z.enum(["preserve", "webp", "avif"]),
+  fmt: z.enum(["preserve", "webp", "avif"]).optional(),
   q: z.int32().min(0).max(100).optional(),
   source: z.string(),
 });
