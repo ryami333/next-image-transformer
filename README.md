@@ -1,1 +1,156 @@
 # next-image-transformer
+
+Self-hosted, Sharp-powered runtime image transforms for Next.js.
+
+Next.js’s built-in image optimization (`next/image` + the `/_next/image` optimizer) is intentionally **constrained and opinionated**. If you want something closer to “Imgix/Cloudinary, but inside your Next.js app,” this package gives you:
+
+- A **route handler** that fetches an upstream image, runs a small set of transforms via **Sharp**, and caches results on disk.
+- A **URL builder** that creates transform URLs you can use from your app.
+
+This tends to work best on managed app hosting where you run a Node runtime and can put a CDN in front:
+
+- DigitalOcean App Platform (CDN-enabled)
+- Render, Fly.io, Railway, Heroku
+- AWS App Runner / ECS / EC2 (often fronted by CloudFront)
+- Google Cloud Run (often fronted by Cloud CDN)
+- Any setup fronted by Cloudflare / Fastly / etc.
+
+### Installation (Next.js App Router)
+
+#### 1) Install:
+
+```bash
+yarn add next-image-transformer sharp
+```
+
+#### 2) Add a route handler
+
+Create a [route handler](https://nextjs.org/docs/app/getting-started/route-handlers) at some path, for example: `src/app/image/route.ts`
+
+```ts
+// src/app/api/image/route.ts
+
+import { createImageTransformRouteHandler } from "next-image-transformer/server";
+
+export const runtime = "nodejs";
+
+const handler = createImageTransformRouteHandler({
+  // Must be an absolute URL. This is used to build a canonical URL for caching.
+  apiRouteUrl:
+    process.env.IMAGE_TRANSFORM_API_URL ?? "http://localhost:3000/api/image",
+});
+
+export const GET = handler;
+```
+
+#### 3) Create a URL builder module
+
+Create a helper for example: `src/lib/imageUrlBuilder.ts`
+
+```ts
+import { createImageUrlBuilder } from "next-image-transformer";
+
+export const imageUrlBuilder = createImageUrlBuilder({
+  // Same absolute URL as the route above, but safe to expose publicly
+  // if you want to build URLs client-side.
+  apiRouteUrl:
+    process.env.NEXT_PUBLIC_IMAGE_TRANSFORM_API_URL ??
+    "http://localhost:3000/api/image",
+});
+```
+
+#### 4) Start writing URLs:
+
+Then build URLs like:
+
+```tsx
+// src/components/MyImage.tsx
+
+import { imageUrlBuilder } from "../lib/imageUrlBuilder";
+
+export function MyImage() {
+  return (
+    <img
+      src={imageUrlBuilder.encode({
+        source: "https://images.example.com/cat.jpg",
+        fmt: "webp",
+        w: 800,
+        q: 80,
+      })}
+    />
+  );
+}
+```
+
+### API reference
+
+#### `createImageTransformRouteHandler(options)`
+
+Import from: `next-image-transformer/server`
+
+Returns: `(req: Request) => Promise<Response>` (compatible with Next.js Route Handlers)
+
+**Options**
+
+- **`apiRouteUrl`**: `string` (required)
+  - **Description**: Absolute URL for the transform route (used to generate a canonical URL for caching).
+  - **Default**: none
+- **`cacheDir`**: `string` (optional)
+  - **Description**: Directory on disk where transformed images are cached.
+  - **Default**: `path.join(process.cwd(), ".transform-cache")`
+- **`cacheControl`**: `string` (optional)
+  - **Description**: Value for the response `Cache-Control` header.
+  - **Default**: `"public, max-age=31536000, immutable"`
+- **`allowedHosts`**: `Array<string | RegExp>` (optional)
+  - **Description**: Allowlist for the upstream `source` URL host. If omitted, **all hosts are allowed**.
+    - Exact host: `"images.example.com"`
+    - Host + port: `"localhost:3000"`
+    - RegExp: `/^(?:.+\.)?example\.com$/` (tested against both `hostname` and `host`)
+  - **Default**: `undefined` (allow all)
+
+**Behavior notes**
+
+- **Format defaulting**: if `fmt` is omitted in the URL, it defaults to `"preserve"`.
+- **Quality defaulting**: if `q` is omitted, the handler uses `100`.
+- **Resize semantics**: if `w` and/or `h` is provided, the image is resized with:
+  - `fit: "inside"`
+  - `withoutEnlargement: true`
+- **Auto-orient**: Sharp `rotate()` is applied to respect EXIF orientation.
+- **Caching**: responses are cached on disk; your runtime must have a writable filesystem.
+
+#### `createImageUrlBuilder(options)`
+
+Import from: `next-image-transformer`
+
+Returns: a Zod codec that can:
+
+- `encode(config: TransformConfig): string` (builds a URL)
+- `safeDecode(url: string): { data?: TransformConfig; error?: ... }` (parses a URL)
+
+**Options**
+
+- **`apiRouteUrl`**: `string` (required)
+  - **Description**: Absolute URL for your transform route.
+  - **Default**: none
+
+### Transform config + query parameters
+
+The transform URL uses these query params:
+
+- **`source`**: `string` (required)
+  - Absolute `http(s)` URL to the upstream image.
+- **`fmt`**: `"preserve" | "webp" | "avif"` (optional in the URL)
+  - **Default (when decoding)**: `"preserve"`
+- **`w`**: `number` (optional)
+  - 32-bit integer
+- **`h`**: `number` (optional)
+  - 32-bit integer
+- **`q`**: `number` (optional)
+  - Integer in `[0..100]`
+  - **Default (when transforming)**: `100`
+
+When building URLs, `fmt=preserve` is omitted from the query string (it’s treated as the “default”).
+
+### License
+
+See `LICENSE.md`.
