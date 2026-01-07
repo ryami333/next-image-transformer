@@ -43,6 +43,6 @@
   },
   "scripts": {
     "build": "vite build && tsc",
-    "release": "yarn build && release-it"
+    "release": "release-it"
   }
 }
