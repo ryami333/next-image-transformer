@@ -1,4 +1,5 @@
 export default {
+  branch: "main",
   access: "public",
   registry: "https://registry.npmjs.org",
   // With Yarn Berry, `yarn npm publish` doesn't accept a directory argument.
