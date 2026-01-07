@@ -113,7 +113,7 @@ Returns: `(req: Request) => Promise<Response>` (compatible with Next.js Route Ha
 - **Format defaulting**: if `fmt` is omitted in the URL, it defaults to `"preserve"`.
 - **Quality defaulting**: if `q` is omitted, the handler uses `100`.
 - **Resize semantics**: if `w` and/or `h` is provided, the image is resized with:
-  - `fit: "inside"`
+  - `fit: "inside"` (or the provided `fit`)
   - `withoutEnlargement: true`
 - **Auto-orient**: Sharp `rotate()` is applied to respect EXIF orientation.
 - **Caching**: responses are cached on disk; your runtime must have a writable filesystem.
@@ -145,6 +145,9 @@ The transform URL uses these query params:
   - 32-bit integer
 - **`h`**: `number` (optional)
   - 32-bit integer
+- **`fit`**: `"cover" | "contain" | "fill" | "inside" | "outside"` (optional)
+  - Only used when resizing (`w` and/or `h` is provided)
+  - **Default (when decoding)**: `"inside"`
 - **`q`**: `number` (optional)
   - Integer in `[0..100]`
   - **Default (when transforming)**: `100`

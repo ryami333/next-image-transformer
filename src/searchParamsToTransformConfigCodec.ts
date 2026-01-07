@@ -11,6 +11,8 @@ export const searchParamsToTransformConfigCodec = z.codec(
       const searchParams = new URLSearchParams();
       if (notNullish(input.w)) searchParams.set("w", String(input.w));
       if (notNullish(input.h)) searchParams.set("h", String(input.h));
+      if (notNullish(input.fit) && input.fit !== "inside")
+        searchParams.set("fit", input.fit);
       if (input.fmt !== "preserve") searchParams.set("fmt", input.fmt);
       if (notNullish(input.q)) searchParams.set("q", String(input.q));
       searchParams.set("source", input.source);
@@ -25,6 +27,11 @@ export const searchParamsToTransformConfigCodec = z.codec(
         h: notNullish(input.get("h"))
           ? stringToIntCodec.decode(input.get("h") ?? "")
           : undefined,
+        fit: notNullish(input.get("fit"))
+          ? z
+              .enum(["cover", "contain", "fill", "inside", "outside"])
+              .parse(input.get("fit"))
+          : "inside",
         fmt: notNullish(input.get("fmt"))
           ? z.enum(["preserve", "webp", "avif"]).parse(input.get("fmt"))
           : "preserve",

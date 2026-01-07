@@ -116,7 +116,7 @@ export const createImageTransformRouteHandler = ({
           ? image.resize({
               width: transformConfig.w,
               height: transformConfig.h,
-              fit: "inside",
+              fit: transformConfig.fit ?? "inside",
               withoutEnlargement: true,
             })
           : image,
