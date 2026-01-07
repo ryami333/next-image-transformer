@@ -4,6 +4,9 @@ export default {
     tagName: "v${version}",
     requireCleanWorkingDir: true,
     requireUpstream: true,
+    requireBranch: "main",
+    tag: true,
+    commit: true,
   },
   github: {
     release: true,
