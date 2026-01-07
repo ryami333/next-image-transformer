@@ -144,16 +144,17 @@ export const createImageTransformRouteHandler = ({
 
     const contentType = (() => {
       switch (transformConfig.fmt) {
-        case "preserve": {
-          return (
-            upstream.headers.get("content-type") ?? "application/octet-stream"
-          );
-        }
         case "avif": {
           return "image/avif";
         }
         case "webp": {
           return "image/webp";
+        }
+        case "preserve":
+        default: {
+          return (
+            upstream.headers.get("content-type") ?? "application/octet-stream"
+          );
         }
       }
     })();
