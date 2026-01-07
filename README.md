@@ -71,7 +71,7 @@ import { imageUrlBuilder } from "../lib/imageUrlBuilder";
 export function MyImage() {
   return (
     <img
-      src={imageUrlBuilder.encode({
+      src={imageUrlBuilder({
         source: "https://images.example.com/cat.jpg",
         fmt: "webp",
         w: 800,
@@ -122,10 +122,7 @@ Returns: `(req: Request) => Promise<Response>` (compatible with Next.js Route Ha
 
 Import from: `next-image-transformer`
 
-Returns: a Zod codec that can:
-
-- `encode(config: TransformConfig): string` (builds a URL)
-- `safeDecode(url: string): { data?: TransformConfig; error?: ... }` (parses a URL)
+Returns: a function `(config: TransformConfig) => string` that builds a transform URL.
 
 **Options**
 
@@ -139,20 +136,18 @@ The transform URL uses these query params:
 
 - **`source`**: `string` (required)
   - Absolute `http(s)` URL to the upstream image.
-- **`fmt`**: `"preserve" | "webp" | "avif"` (optional in the URL)
-  - **Default (when decoding)**: `"preserve"`
+- **`fmt`**: `"preserve" | "webp" | "avif"` (optional)
+  - If omitted, it defaults to `"preserve"`.
 - **`w`**: `number` (optional)
   - 32-bit integer
 - **`h`**: `number` (optional)
   - 32-bit integer
 - **`fit`**: `"cover" | "contain" | "fill" | "inside" | "outside"` (optional)
   - Only used when resizing (`w` and/or `h` is provided)
-  - **Default (when decoding)**: `"inside"`
+  - If omitted, it defaults to `"inside"`.
 - **`q`**: `number` (optional)
   - Integer in `[0..100]`
-  - **Default (when transforming)**: `100`
-
-When building URLs, `fmt=preserve` is omitted from the query string (it’s treated as the “default”).
+  - **Default**: `100`
 
 ### License
 
