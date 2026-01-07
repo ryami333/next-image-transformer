@@ -1,5 +1,5 @@
 import path from "node:path";
-import { createImageUrlBuilder } from "./createImageUrlBuilder";
+import { createImageUrlCodec } from "./createImageUrlCodec";
 import { getTransformCacheKey } from "./getTransformCacheKey";
 import { readTransformCache } from "./readTransformCache";
 import sharp, { type Sharp } from "sharp";
@@ -26,7 +26,7 @@ export const createImageTransformRouteHandler = ({
    */
   allowedHosts?: Array<string | RegExp>;
 }) => {
-  const urlStringToTransformConfig = createImageUrlBuilder({ apiRouteUrl });
+  const urlStringToTransformConfig = createImageUrlCodec({ apiRouteUrl });
 
   const isAllowedSourceUrl = (sourceUrl: URL) => {
     if (!allowedHosts) return true;
